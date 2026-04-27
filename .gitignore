@@ -1,0 +1,14 @@
+# Virtual Environments
+gdgvenv/
+
+# Folders with spaces (use backslashes)
+Cinematic\ Landing\ Page\ Design/
+Futuristic\ AI\ Dashboard\ Design/
+
+# Python and Node dependencies
+__pycache__/
+_pycache_/
+node_modules/
+
+# Specific files
+details.txt

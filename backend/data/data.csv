@@ -1,0 +1,16 @@
+age,gender,income,education,label
+25,Male,30000,Bachelors,0
+30,Female,40000,Masters,1
+22,Male,20000,Bachelors,0
+45,Female,80000,PhD,1
+35,Male,50000,Masters,1
+28,Female,35000,Bachelors,0
+50,Male,90000,PhD,1
+23,Female,25000,Bachelors,0
+40,Male,70000,Masters,1
+29,Female,45000,Masters,1
+33,Male,48000,Bachelors,0
+38,Female,62000,Masters,1
+27,Male,32000,Bachelors,0
+42,Female,75000,PhD,1
+31,Male,52000,Masters,1

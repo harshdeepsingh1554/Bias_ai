@@ -22,6 +22,7 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
   const [sensitiveColumn, setSensitiveColumn] = useState("");
   const [targetOpen, setTargetOpen] = useState(false);
   const [sensitiveOpen, setSensitiveOpen] = useState(false);
+  const [rerunMode, setRerunMode] = useState(false);
 
   const canRun = projectId && datasetUploaded && targetColumn && sensitiveColumn && !isAuditing;
 
@@ -45,6 +46,7 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
         sensitive_column: sensitiveColumn,
       });
       setAuditResult(result);
+      setRerunMode(false);
 
       addTimelineEvent({
         icon: "report",
@@ -124,7 +126,7 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
           </div>
 
           <AnimatePresence mode="wait">
-            {auditResult ? (
+            {auditResult && !rerunMode ? (
               <motion.div
                 key="done"
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -136,9 +138,9 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
                   Audit Complete!
                 </h3>
                 <p style={{ fontFamily: "Inter", fontSize: 13 }} className="text-white/60 mb-4">
-                  Switch to Dashboard to see full results.
+                  Switch to Dashboard to see full results, or run again with different columns.
                 </p>
-                <div className="grid grid-cols-3 gap-3 max-w-md mx-auto">
+                <div className="grid grid-cols-3 gap-3 max-w-md mx-auto mb-6">
                   <div className="rounded-xl p-3 bg-white/5 border border-white/10">
                     <div style={{ fontFamily: "Inter", fontSize: 10 }} className="text-white/40 uppercase mb-1">Accuracy</div>
                     <div style={{ fontFamily: "Space Grotesk", fontWeight: 700, fontSize: 20 }} className="text-blue-400">
@@ -158,14 +160,44 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
                     </div>
                   </div>
                 </div>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => setRerunMode(true)}
+                    className="px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-white/80 transition-all hover:border-white/20"
+                    style={{ fontFamily: "Inter", fontSize: 13, fontWeight: 500 }}
+                  >
+                    🔄 Run Again
+                  </button>
+                  {onComplete && (
+                    <button
+                      onClick={onComplete}
+                      className="px-5 py-2.5 rounded-xl text-white transition-all shadow-[0_0_25px_rgba(99,102,241,0.4)] hover:shadow-[0_0_35px_rgba(99,102,241,0.7)]"
+                      style={{ background: "linear-gradient(90deg,#3b82f6,#8b5cf6)", fontFamily: "Inter", fontSize: 13, fontWeight: 500 }}
+                    >
+                      View Dashboard →
+                    </button>
+                  )}
+                </div>
               </motion.div>
             ) : (
               <motion.div key="form" className="space-y-5">
+                {/* Helper info */}
+                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-blue-500/[0.07] border border-blue-400/20">
+                  <span style={{ fontSize: 16 }}>💡</span>
+                  <div style={{ fontFamily: "Inter", fontSize: 12, lineHeight: 1.6 }} className="text-blue-200/80">
+                    <strong>Target Column</strong> = the outcome your model predicts (e.g. <code className="px-1 py-0.5 rounded bg-white/10 text-blue-300">label</code>, <code className="px-1 py-0.5 rounded bg-white/10 text-blue-300">approved</code>).<br />
+                    <strong>Sensitive Column</strong> = the demographic attribute to audit for bias (e.g. <code className="px-1 py-0.5 rounded bg-white/10 text-blue-300">gender</code>, <code className="px-1 py-0.5 rounded bg-white/10 text-blue-300">race</code>).
+                  </div>
+                </div>
+
                 {/* Target column select */}
                 <div>
-                  <label style={{ fontFamily: "Inter", fontSize: 12, fontWeight: 500 }} className="text-white/70 block mb-2">
+                  <label style={{ fontFamily: "Inter", fontSize: 12, fontWeight: 500 }} className="text-white/70 block mb-1">
                     Target Column (ground truth label)
                   </label>
+                  <p style={{ fontFamily: "Inter", fontSize: 11 }} className="text-white/35 mb-2">
+                    The 0/1 outcome column your model predicts — not a demographic column
+                  </p>
                   <div className="relative">
                     <button
                       onClick={() => { setTargetOpen(!targetOpen); setSensitiveOpen(false); }}
@@ -202,9 +234,12 @@ export function RunAuditPanel({ onComplete }: { onComplete?: () => void }) {
 
                 {/* Sensitive column select */}
                 <div>
-                  <label style={{ fontFamily: "Inter", fontSize: 12, fontWeight: 500 }} className="text-white/70 block mb-2">
+                  <label style={{ fontFamily: "Inter", fontSize: 12, fontWeight: 500 }} className="text-white/70 block mb-1">
                     Sensitive / Protected Column
                   </label>
+                  <p style={{ fontFamily: "Inter", fontSize: 11 }} className="text-white/35 mb-2">
+                    The demographic attribute to check for bias (e.g. gender, age, ethnicity)
+                  </p>
                   <div className="relative">
                     <button
                       onClick={() => { setSensitiveOpen(!sensitiveOpen); setTargetOpen(false); }}

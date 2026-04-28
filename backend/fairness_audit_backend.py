@@ -186,13 +186,18 @@ def infer_prediction_from_model(model: Any, df: pd.DataFrame, target_col: str) -
     print(f"[PREDICT] X columns: {list(X.columns)}, dtypes: {dict(X.dtypes)}, shape: {X.shape}")
 
     # If the model is a Pipeline, it might handle non-numeric data automatically.
-    # We attempt to pass the original X first, then fall back to only numeric
-    # columns if the model fails.
+    # We attempt to pass the original X first, then fall back to label-encoded X,
+    # then finally to only numeric columns if the model still fails.
     numeric_X = X.select_dtypes(include=[np.number])
 
+    # Label-encode string columns as a middle-ground fallback
+    label_encoded_X = X.copy()
+    for col in label_encoded_X.select_dtypes(include=["object", "category"]).columns:
+        label_encoded_X[col] = label_encoded_X[col].astype("category").cat.codes
+
     last_error = None
-    # Try both full X (preferred) and numeric_X (fallback)
-    for label, features in [("all_columns", X), ("numeric_only", numeric_X)]:
+    # Try all_columns (preferred), label_encoded, then numeric_only (last resort)
+    for label, features in [("all_columns", X), ("label_encoded", label_encoded_X), ("numeric_only", numeric_X)]:
         if features.empty:
             print(f"[PREDICT] Skipping {label}: empty")
             continue

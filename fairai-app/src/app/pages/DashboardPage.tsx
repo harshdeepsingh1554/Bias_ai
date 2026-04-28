@@ -5,10 +5,7 @@ import { Topbar } from "../components/dashboard/Topbar";
 import { KpiCards } from "../components/dashboard/KpiCards";
 import { FairnessLineChart, BiasBarChart } from "../components/dashboard/Charts";
 import { BiasAlerts } from "../components/dashboard/BiasAlerts";
-import { Heatmap } from "../components/dashboard/Heatmap";
-import { ModelInsights } from "../components/dashboard/ModelInsights";
-import { Explainability } from "../components/dashboard/Explainability";
-import { Timeline } from "../components/dashboard/Timeline";
+import { AiInsightsPanel } from "../components/dashboard/AiInsightsPanel";
 import { UploadModelPanel } from "../components/dashboard/UploadModelPanel";
 import { UploadDatasetPanel } from "../components/dashboard/UploadDatasetPanel";
 import { RunAuditPanel } from "../components/dashboard/RunAuditPanel";
@@ -140,17 +137,10 @@ function DashboardContent() {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
         <div className="xl:col-span-2">
-          <Heatmap />
+          <AiInsightsPanel />
         </div>
         <BiasAlerts />
       </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        <Explainability />
-        <ModelInsights />
-      </div>
-
-      <Timeline />
 
       <div className="text-center pt-4 pb-6" style={{ fontFamily: "Inter", fontSize: 11 }}>
         <span className="text-white/30">FairAI © 2026 · Building trustworthy AI, one model at a time.</span>
@@ -158,3 +148,4 @@ function DashboardContent() {
     </>
   );
 }
+

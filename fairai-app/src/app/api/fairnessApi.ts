@@ -3,7 +3,7 @@
  * All calls go through the Vite proxy: /api → http://localhost:8000
  */
 
-const BASE = "/api";
+const BASE = import.meta.env.VITE_API_URL || "/api";
 
 /** Safely extract an error message from a backend response.
  *  FastAPI returns JSON `{ detail: "..." }` for 4xx, but a plain-text
